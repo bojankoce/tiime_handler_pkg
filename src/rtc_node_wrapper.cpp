@@ -14,34 +14,51 @@ class RtcNodeROSWrapper : public rclcpp::Node
 public:
     RtcNodeROSWrapper() : Node("rtc_node")
     {        
-        rtc_.reset(new TimeHandler("/dev/rtc0"));        
+        rtc_.reset(new TimeHandler("/dev/rtc0")); // 
                
         get_unix_time_server_ = this->create_service<custom_interfaces_pkg::srv::GetUnixTimestamp>(
             "get_unix_timestamp",
-            std::bind(&RtcNodeROSWrapper::callbackGetUnixTimestamp, this, _1, _2));      
-        
+            std::bind(&RtcNodeROSWrapper::callbackGetUnixTimestamp, this, _1, _2));              
         RCLCPP_INFO(this->get_logger(), "Get Unix Timestamp Service server has been started.");
+
+        set_unix_time_server_ = this->create_service<custom_interfaces_pkg::srv::SetUnixTimestamp>(
+            "set_unix_timestamp",
+            std::bind(&RtcNodeROSWrapper::callbackSetUnixTimestamp, this, _1, _2));              
+        RCLCPP_INFO(this->get_logger(), "Set Unix Timestamp Service server has been started.");
 
     }
 
 private:
     std::unique_ptr<TimeHandler> rtc_;
     
-    int callbackGetUnixTimestamp(const custom_interfaces_pkg::srv::GetUnixTimestamp::Request::SharedPtr request,
+    int callbackGetUnixTimestamp(const custom_interfaces_pkg::srv::GetUnixTimestamp::Request::SharedPtr,
                             const custom_interfaces_pkg::srv::GetUnixTimestamp::Response::SharedPtr response)
-    {
-        
+    {        
         int ret = 0;
         time_t unix_time;
         
         ret = rtc_->GetTime(&unix_time);
-        response->timestamp = (uint32_t)unix_time;
+        response->timestamp = static_cast<uint32_t>(unix_time);
         response->status = ret;
-        response->message = "This is test";
-        RCLCPP_INFO(this->get_logger(), "Service is called");
+        response->message = "This is GetUnixTimestamp status message";
+        RCLCPP_INFO(this->get_logger(), "Service GetUnixTimestamp is called");
         
         return ret;
     }    
+
+    int callbackSetUnixTimestamp(const custom_interfaces_pkg::srv::SetUnixTimestamp::Request::SharedPtr request,
+                            const custom_interfaces_pkg::srv::SetUnixTimestamp::Response::SharedPtr response)
+    {        
+        int ret = 0;
+        time_t unix_time;
+        unix_time = static_cast<time_t>(request->timestamp);        
+        ret = rtc_->SetTime(unix_time);
+        response->status = ret;
+        response->message = "This is SetUnixTimestamp status message";
+        RCLCPP_INFO(this->get_logger(), "Service SetUnixTimestamp is called");
+        
+        return ret;
+    }  
 
     rclcpp::Service<custom_interfaces_pkg::srv::GetUnixTimestamp>::SharedPtr get_unix_time_server_;
     rclcpp::Service<custom_interfaces_pkg::srv::SetUnixTimestamp>::SharedPtr set_unix_time_server_;
