@@ -14,7 +14,7 @@ class TimeHandler{
 
 public:
 
-    TimeHandler(std::string rtc_path = "/dev/rtc0");    //< Constructor. Will try to get unix timestamp from NTP server and initialize RTC
+    TimeHandler(const char * rtc_path = "/dev/rtc0");    //< Constructor. Will try to get unix timestamp from NTP server and initialize RTC
 
     int GetTime(time_t * unix_time);    //< Get time in the form of Unix timestamp. The timestamp will be taken from RTC chip
     int SetTime(time_t unix_time);      //< Set the time of RTC (Hardware Clock time). 
@@ -22,6 +22,6 @@ public:
 
 private:
     int fd;
-    char const * path_to_rtc;
+    const char * path_to_rtc;
 
 };

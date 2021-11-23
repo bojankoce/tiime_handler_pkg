@@ -14,7 +14,8 @@ class RtcNodeROSWrapper : public rclcpp::Node
 public:
     RtcNodeROSWrapper() : Node("rtc_node")
     {        
-        rtc_.reset(new TimeHandler("/dev/rtc0")); // 
+        //TODO(bojankoce): Take the RTC path ("/dev/rtc0") from parameter list
+        rtc_.reset(new TimeHandler("/dev/rtc0"));  
                
         get_unix_time_server_ = this->create_service<custom_interfaces_pkg::srv::GetUnixTimestamp>(
             "get_unix_timestamp",
@@ -25,6 +26,9 @@ public:
             "set_unix_timestamp",
             std::bind(&RtcNodeROSWrapper::callbackSetUnixTimestamp, this, _1, _2));              
         RCLCPP_INFO(this->get_logger(), "Set Unix Timestamp Service server has been started.");
+
+        //TODO(bojankoce): Add AdjustTime Server that will be used to adjust time time between Harwdare Clock (RTC) and System Clock
+        // one way to do it is through std::system("/sbin/hwclock -X"); command: https://man7.org/linux/man-pages/man8/hwclock.8.html
 
     }
 

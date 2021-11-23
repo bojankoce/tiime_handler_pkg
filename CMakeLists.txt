@@ -21,13 +21,6 @@ endif()
 # Research better ways to organize and include source code - https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
 # https://cliutils.gitlab.io/modern-cmake/
 
-#add_library(myLib "")
-
-#add_subdirectory(src/rtc_node)
-#add_subdirectory(src)
-#add_subdirectory(include/time_handler_pkg/rtc_node)
-#add_subdirectory(include/time_handler_pkg/rtc_node)
-
 # TODO(bojankoce): Research if there is a better way than to manually add all the source files 
 set(RTC_NODE_SOURCES 
   src/rtc_node_wrapper.cpp
