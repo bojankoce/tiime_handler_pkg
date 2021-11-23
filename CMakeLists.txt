@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-cmake_policy(SET CMP0076 NEW)
+#cmake_policy(SET CMP0076 NEW)
 project(time_handler_pkg)
 
 # Default to C99
@@ -38,11 +38,10 @@ set(RTC_NODE_SOURCES
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(custom_interfaces_pkg REQUIRED)
-find_package(example_interfaces REQUIRED)
 
 add_executable(rtc_node ${RTC_NODE_SOURCES})
 target_include_directories(rtc_node PRIVATE src/rtc_node)
-ament_target_dependencies(rtc_node rclcpp custom_interfaces_pkg example_interfaces)
+ament_target_dependencies(rtc_node rclcpp custom_interfaces_pkg)
 
 
 # This part is needed so ros2 run can find our executable

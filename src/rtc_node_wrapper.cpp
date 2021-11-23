@@ -6,8 +6,6 @@
 #include <memory>
 #include <time.h>
 
-#include "example_interfaces/srv/add_two_ints.hpp"
-
 using std::placeholders::_1;
 using std::placeholders::_2;
 
@@ -17,11 +15,7 @@ public:
     RtcNodeROSWrapper() : Node("rtc_node")
     {        
         rtc_.reset(new TimeHandler("/dev/rtc0"));        
-        
-        server_ = this->create_service<example_interfaces::srv::AddTwoInts>(
-            "add_two_ints",
-            std::bind(&RtcNodeROSWrapper::callbackAddTwoInts, this, _1, _2));
-        
+               
         get_unix_time_server_ = this->create_service<custom_interfaces_pkg::srv::GetUnixTimestamp>(
             "get_unix_timestamp",
             std::bind(&RtcNodeROSWrapper::callbackGetUnixTimestamp, this, _1, _2));      
@@ -33,13 +27,6 @@ public:
 private:
     std::unique_ptr<TimeHandler> rtc_;
     
-    void callbackAddTwoInts(const example_interfaces::srv::AddTwoInts::Request::SharedPtr request,
-                            const example_interfaces::srv::AddTwoInts::Response::SharedPtr response)
-    {
-        response->sum = request->a + request->b;
-        RCLCPP_INFO(this->get_logger(), "%d + %d = %d", request->a, request->b, response->sum);
-    }
-
     int callbackGetUnixTimestamp(const custom_interfaces_pkg::srv::GetUnixTimestamp::Request::SharedPtr request,
                             const custom_interfaces_pkg::srv::GetUnixTimestamp::Response::SharedPtr response)
     {
@@ -56,7 +43,6 @@ private:
         return ret;
     }    
 
-    rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr server_;
     rclcpp::Service<custom_interfaces_pkg::srv::GetUnixTimestamp>::SharedPtr get_unix_time_server_;
     rclcpp::Service<custom_interfaces_pkg::srv::SetUnixTimestamp>::SharedPtr set_unix_time_server_;
     rclcpp::Service<custom_interfaces_pkg::srv::AdjustTime>::SharedPtr adjust_time_server_;
